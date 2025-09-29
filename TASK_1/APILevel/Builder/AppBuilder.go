@@ -5,6 +5,8 @@ import (
 	"Kaspersky_Go/APILevel/HTTPServer"
 	"Kaspersky_Go/ServiceLevel/UseCases/Processors"
 	"Kaspersky_Go/ServiceLevel/UseCases/WokerPool"
+	"log/slog"
+	"os"
 )
 
 type AppBuilder struct {
@@ -36,10 +38,15 @@ func (b *AppBuilder) WithServerAddr(addr string) *AppBuilder {
 }
 
 func (b *AppBuilder) Build() *App {
+	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	})
+
+	logger := slog.New(handler)
 	queue := Adapters.NewMemoryQueue(b.queueSize)
 	state := Adapters.NewMemoryStateStore()
 	processor := Processors.NewRetryProcessor()
-	pool := WokerPool.NewWorkerPool(b.workerCount, queue, state, processor)
+	pool := WokerPool.NewWorkerPool(b.workerCount, queue, state, processor, logger)
 	server := HTTPServer.NewHTTPServer(b.serverAddr, queue, state)
 
 	return &App{
@@ -47,5 +54,6 @@ func (b *AppBuilder) Build() *App {
 		state:  state,
 		pool:   pool,
 		server: server,
+		logger: logger,
 	}
 }

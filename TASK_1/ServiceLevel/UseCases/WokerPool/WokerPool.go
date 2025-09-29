@@ -5,6 +5,7 @@ import (
 	"Kaspersky_Go/ServiceLevel/Interfaces/IAdapters"
 	"Kaspersky_Go/ServiceLevel/Interfaces/IWorkerPool"
 	"context"
+	"log/slog"
 )
 
 type WorkerPool struct {
@@ -12,16 +13,18 @@ type WorkerPool struct {
 	queue     IAdapters.Queue
 	state     IAdapters.StateStore
 	processor IWorkerPool.JobProcessor
+	logger    *slog.Logger
 }
 
 func NewWorkerPool(workers int, queue IAdapters.Queue, state IAdapters.StateStore,
-	processor IWorkerPool.JobProcessor) *WorkerPool {
+	processor IWorkerPool.JobProcessor, log *slog.Logger) *WorkerPool {
 
 	return &WorkerPool{
 		workers:   workers,
 		queue:     queue,
 		state:     state,
 		processor: processor,
+		logger:    log,
 	}
 }
 
@@ -42,7 +45,7 @@ func (wp *WorkerPool) Start(ctx context.Context) {
 						Attempts: job.Attempts,
 					})
 
-					status := wp.processor.Process(ctx, job)
+					status := wp.processor.Process(ctx, job, wp.logger)
 
 					wp.state.Set(job.ID, status)
 

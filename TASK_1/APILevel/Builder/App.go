@@ -6,8 +6,7 @@ import (
 	"Kaspersky_Go/ServiceLevel/Interfaces/IWorkerPool"
 	"Kaspersky_Go/ServiceLevel/UseCases/WokerPool"
 	"context"
-	"fmt"
-	"log"
+	"log/slog"
 	"os/signal"
 	"syscall"
 	"time"
@@ -19,6 +18,7 @@ type App struct {
 	pool      *WokerPool.WorkerPool
 	server    *HTTPServer.HTTPServer
 	processor IWorkerPool.JobProcessor
+	logger    *slog.Logger
 }
 
 func (a *App) Start() {
@@ -26,32 +26,32 @@ func (a *App) Start() {
 	defer stop()
 
 	go a.pool.Start(ctx)
-	fmt.Println("Worker pool started")
+	a.logger.Info("Worker pool started")
 
 	errCh := make(chan error, 1)
 	go func() {
-		fmt.Println("Starting HTTP server on port 8080...")
+		a.logger.Info("Starting HTTP server on port 8080...")
 		if err := a.server.Start(); err != nil {
 			errCh <- err
 		}
 	}()
 
-	fmt.Println("HTTP server goroutine launched")
+	a.logger.Info("HTTP server goroutine launched")
 
 	select {
 	case <-ctx.Done():
-		fmt.Println("shutdown signal received")
+		a.logger.Info("shutdown signal received")
 	case err := <-errCh:
-		log.Fatalf("server error: %v", err)
+		a.logger.Error("server error", "err", err)
 	}
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := a.server.Stop(shutdownCtx); err != nil {
-		fmt.Printf("server shutdown error: %v", err)
+		a.logger.Error("server shutdown error", "err", err)
 	}
 
 	a.queue.Close()
-	fmt.Println("graceful shutdown complete")
+	a.logger.Info("graceful shutdown complete")
 }

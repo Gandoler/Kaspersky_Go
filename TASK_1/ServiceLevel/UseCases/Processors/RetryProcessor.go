@@ -3,7 +3,7 @@ package Processors
 import (
 	"Kaspersky_Go/ModeLevel/Structures"
 	"context"
-	"fmt"
+	"log/slog"
 	"math/rand"
 	"time"
 )
@@ -14,25 +14,56 @@ func NewRetryProcessor() *RetryProcessor {
 	return &RetryProcessor{}
 }
 
-func (p *RetryProcessor) Process(ctx context.Context, job Structures.Job) Structures.JobStatus {
+func (p *RetryProcessor) Process(ctx context.Context, job Structures.Job, log *slog.Logger) Structures.JobStatus {
+	// Логируем начало обработки
+	log.Info("Starting job processing",
+		"jobID", job.ID,
+		"payload", job.Payload,
+		"attempts", job.Attempts,
+		"maxRetries", job.MaxRetries,
+	)
 
+	// Симуляция работы
 	time.Sleep(time.Duration(100+rand.Intn(50)) * time.Millisecond)
-	fmt.Printf("process running  ID%d:\tpaylod:%s", job.ID, job.Payload)
+
+	// Проверка на случайную ошибку (20% шанс)
 	if rand.Intn(100) < 20 {
 		job.Attempts++
-		if job.Attempts <= job.MaxRetries {
+		log.Warn("Job failed, will check retries",
+			"jobID", job.ID,
+			"attempts", job.Attempts,
+		)
 
+		if job.Attempts <= job.MaxRetries {
 			delay := backoff(job.Attempts)
+			log.Info("Retrying job with backoff",
+				"jobID", job.ID,
+				"nextAttemptDelay", delay,
+				"attempts", job.Attempts,
+			)
 			time.Sleep(delay)
 			return Structures.JobStatus{
 				State:    Structures.StateQueued,
 				Attempts: job.Attempts,
 				Error:    "retrying",
 			}
+		} else {
+			log.Error("Max retries reached, job failed permanently",
+				"jobID", job.ID,
+				"attempts", job.Attempts,
+			)
 		}
 	}
 
-	return Structures.JobStatus{State: Structures.StateDone, Attempts: job.Attempts}
+	// Логируем успешное завершение
+	log.Info("Job processed successfully",
+		"jobID", job.ID,
+		"attempts", job.Attempts,
+	)
+	return Structures.JobStatus{
+		State:    Structures.StateDone,
+		Attempts: job.Attempts,
+	}
 }
 
 func backoff(attempt int) time.Duration {
