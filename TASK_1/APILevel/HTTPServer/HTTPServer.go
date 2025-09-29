@@ -1,4 +1,4 @@
-package HttpR
+package HTTPServer
 
 import (
 	"Kaspersky_Go/APILevel/HTTPServer/Templates"
