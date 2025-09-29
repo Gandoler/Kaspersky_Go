@@ -34,11 +34,12 @@ func EnvTOInt(str string, typeOf string) (int, error) {
 
 	tmp := 0
 	if str == "" {
-		var err error
-		tmp, err = strconv.Atoi(str)
-		if err != nil {
-			return 0, fmt.Errorf("ошибка при конвертации %s", typeOf)
-		}
+		return 0, fmt.Errorf("пустая строка %s", typeOf)
+	}
+	var err error
+	tmp, err = strconv.Atoi(str)
+	if err != nil {
+		return 0, fmt.Errorf("ошибка при конвертации %s", typeOf)
 	}
 	return tmp, nil
 }
