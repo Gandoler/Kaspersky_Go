@@ -1,4 +1,4 @@
-package HTTPServerTEST
+package HandlersTESTS
 
 import (
 	"Kaspersky_Go/APILevel/Adapters"

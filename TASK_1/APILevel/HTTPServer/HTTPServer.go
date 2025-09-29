@@ -25,8 +25,8 @@ func NewHTTPServer(addr string, queue IAdapters2.Queue, state IAdapters2.StateSt
 		state:  state,
 	}
 
-	mux.HandleFunc("/healthz", s.handleHealth)
-	mux.HandleFunc("/enqueue", s.handleEnqueue)
+	mux.HandleFunc("/healthz", s.HandleHealth)
+	mux.HandleFunc("/enqueue", s.HandleEnqueue)
 
 	fmt.Printf("HTTP server initialized on %s\n", addr)
 	return s
@@ -42,13 +42,13 @@ func (s *HTTPServer) Stop(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func (s *HTTPServer) handleHealth(w http.ResponseWriter, r *http.Request) {
+func (s *HTTPServer) HandleHealth(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Health check called")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte("OK"))
 }
 
-func (s *HTTPServer) handleEnqueue(w http.ResponseWriter, r *http.Request) {
+func (s *HTTPServer) HandleEnqueue(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Incoming %s request to /enqueue\n", r.Method)
 
 	if r.Method != "POST" {
