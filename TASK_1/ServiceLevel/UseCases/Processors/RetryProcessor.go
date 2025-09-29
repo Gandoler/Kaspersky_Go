@@ -24,7 +24,7 @@ func (p *RetryProcessor) Process(ctx context.Context, job Structures.Job, log *s
 	)
 
 	// Симуляция работы
-	time.Sleep(time.Duration(100+rand.Intn(50)) * time.Millisecond)
+	time.Sleep(time.Duration(100+rand.Intn(450)) * time.Millisecond)
 
 	// Проверка на случайную ошибку (20% шанс)
 	if rand.Intn(100) < 20 {
