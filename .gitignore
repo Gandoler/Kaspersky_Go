@@ -1,0 +1,94 @@
+TASK_1/.idea/workspace.xml
+# Rider / JetBrains
+.idea/
+*.sln.iml
+*.DotSettings.user
+rider.project.*
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+*/bin/
+*/obj/
+
+# Configuration / Debug / Release folders
+Debug/
+Release/
+publish/
+PublishProfiles/
+
+# NuGet
+*.nupkg
+*.snupkg
+.project.nuget.cache
+project.assets.json
+project.packagespec.json
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
+*.nuget.cache
+
+# Restore / Assembly info caches
+*.restore.info
+*.AssemblyInfo.cs
+*.AssemblyInfoInputs.cache
+*.AssemblyReference.cache
+
+# Runtime / binaries / PDBs
+*.dll
+*.exe
+*.pdb
+*.app
+*.appx
+*.msi
+*.so
+*.dylib
+
+# Logs
+*.log
+
+
+# Test results
+TestResults/
+*.trx
+
+# IIS / publish artifacts
+*.publishsettings
+*.azurePubxml
+_PublishedWebsites/
+
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Secrets / local settings
+appsettings.*.json
+*.local
+.env
+.env.*
+
+
+# dop papki
+packages/
+packages/
+AwesomeApi/API/packages/
+
+# Rider / IntelliJ IDEA
+.idea/
+.idea.AwesomeApi/
+
+/AwesomeApi/.idea/
+/AwesomeApi/.idea/.idea.AwesomeApi/
+/publish
+TASK_1/.idea/workspace.xml
