@@ -9,6 +9,10 @@ import (
 
 type RetryProcessor struct{}
 
+func NewRetryProcessor() *RetryProcessor {
+	return &RetryProcessor{}
+}
+
 func (p *RetryProcessor) Process(ctx context.Context, job Structures.Job) Structures.JobStatus {
 
 	time.Sleep(time.Duration(100+rand.Intn(50)) * time.Millisecond)

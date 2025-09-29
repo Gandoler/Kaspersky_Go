@@ -1,34 +1,36 @@
 package main
 
 import (
-	"Kaspersky_Go/APILevel/Adapters"
+	"Kaspersky_Go/APILevel/Builder"
 	"fmt"
 	"os"
 	"strconv"
 )
 
 func main() {
-	QUEUE_SIZE_env := os.Getenv("QUEUE_SIZE")
-	WORKERS_env     := os.Getenv("WORKERS")
+	QueueSizeEnv := os.Getenv("QUEUE_SIZE")
+	WorkersEnv := os.Getenv("WORKERS")
 
-	size, err := EnvTOInt(QUEUE_SIZE_env, "QUEUE_SIZE")
+	size, err := EnvTOInt(QueueSizeEnv, "QUEUE_SIZE")
 	if err != nil {
 		panic(err)
 	}
-	worker, err := EnvTOInt(WORKERS_env, "WORKERS")
+	poolSize, err := EnvTOInt(WorkersEnv, "WORKERS")
 	if err != nil {
 		panic(err)
 	}
 
+	app := Builder.NewAppBuilder().
+		WithQueueSize(size).
+		WithWorkerCount(poolSize).
+		WithServerAddr(":8080").
+		Build()
 
-	queue := Adapters.NewMemoryQueue(size)
-	state := Adapters.NewMemoryStateStore()
-	pool  :=
+	app.Start()
 
 }
 
-
-func EnvTOInt(str string, typeOf string) (int ,error) {
+func EnvTOInt(str string, typeOf string) (int, error) {
 
 	tmp := 0
 	if str != "" {

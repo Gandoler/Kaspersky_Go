@@ -1,8 +1,9 @@
 package Builder
 
 import (
-	"Kaspersky_Go/APILevel/Adapters"
 	"Kaspersky_Go/APILevel/HTTPServer"
+	"Kaspersky_Go/ServiceLevel/Interfaces/IAdapters"
+	"Kaspersky_Go/ServiceLevel/Interfaces/IWorkerPool"
 	"Kaspersky_Go/ServiceLevel/UseCases/WokerPool"
 	"context"
 	"log"
@@ -12,10 +13,11 @@ import (
 )
 
 type App struct {
-	queue  *Adapters.MemoryQueue
-	state  *Adapters.MemoryStateStore
-	pool   *WokerPool.WorkerPool
-	server *HTTPServer.HTTPServer
+	queue     IAdapters.Queue
+	state     IAdapters.StateStore
+	pool      *WokerPool.WorkerPool
+	server    *HTTPServer.HTTPServer
+	processor IWorkerPool.JobProcessor
 }
 
 func (a *App) Start() {
@@ -31,7 +33,6 @@ func (a *App) Start() {
 		}
 	}()
 
-	// Ожидание сигналов или ошибок сервера
 	select {
 	case <-ctx.Done():
 		log.Println("shutdown signal received")
@@ -39,7 +40,6 @@ func (a *App) Start() {
 		log.Fatalf("server error: %v", err)
 	}
 
-	// Graceful shutdown
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
