@@ -52,3 +52,34 @@ func TestHandleEnqueue(t *testing.T) {
 		t.Errorf("got %v, want %v", st.State, Structures.StateQueued)
 	}
 }
+
+func TestHandleEnqueue_MethodNotAllowed(t *testing.T) {
+	queue := Adapters.NewMemoryQueue(1)
+	state := Adapters.NewMemoryStateStore()
+	srv := HTTPServer.NewHTTPServer(":0", queue, state)
+
+	req := httptest.NewRequest(http.MethodGet, "/enqueue", nil)
+	w := httptest.NewRecorder()
+	srv.HandleEnqueue(w, req)
+
+	resp := w.Result()
+	if resp.StatusCode != http.StatusMethodNotAllowed {
+		t.Errorf("status = %d, want %d", resp.StatusCode, http.StatusMethodNotAllowed)
+	}
+}
+
+func TestHandleEnqueue_BadJSON(t *testing.T) {
+	queue := Adapters.NewMemoryQueue(1)
+	state := Adapters.NewMemoryStateStore()
+	srv := HTTPServer.NewHTTPServer(":0", queue, state)
+
+	badBody := bytes.NewBufferString("{bad json")
+	req := httptest.NewRequest(http.MethodPost, "/enqueue", badBody)
+	w := httptest.NewRecorder()
+	srv.HandleEnqueue(w, req)
+
+	resp := w.Result()
+	if resp.StatusCode != http.StatusBadRequest {
+		t.Errorf("status = %d, want %d", resp.StatusCode, http.StatusBadRequest)
+	}
+}
