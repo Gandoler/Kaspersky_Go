@@ -36,8 +36,13 @@ func (wp *WorkerPool) Start(ctx context.Context) {
 					if !ok {
 						return
 					}
+					wp.state.Set(job.ID, Structures.JobStatus{
+						State:    Structures.StateRunning,
+						Attempts: job.Attempts,
+					})
 
 					status := wp.processor.Process(ctx, job)
+
 					wp.state.Set(job.ID, status)
 
 					if status.State == Structures.StateQueued {
