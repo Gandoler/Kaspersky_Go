@@ -33,7 +33,7 @@ func main() {
 func EnvTOInt(str string, typeOf string) (int, error) {
 
 	tmp := 0
-	if str != "" {
+	if str == "" {
 		var err error
 		tmp, err = strconv.Atoi(str)
 		if err != nil {

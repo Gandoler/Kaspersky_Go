@@ -3,6 +3,7 @@ package Processors
 import (
 	"Kaspersky_Go/ModeLevel/Structures"
 	"context"
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -16,7 +17,7 @@ func NewRetryProcessor() *RetryProcessor {
 func (p *RetryProcessor) Process(ctx context.Context, job Structures.Job) Structures.JobStatus {
 
 	time.Sleep(time.Duration(100+rand.Intn(50)) * time.Millisecond)
-
+	fmt.Printf("process running  ID%d:\tpaylod:%s", job.ID, job.Payload)
 	if rand.Intn(100) < 20 {
 		job.Attempts++
 		if job.Attempts <= job.MaxRetries {
