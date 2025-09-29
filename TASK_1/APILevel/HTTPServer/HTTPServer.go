@@ -2,8 +2,8 @@ package HTTPServer
 
 import (
 	"Kaspersky_Go/APILevel/HTTPServer/Templates"
-	"Kaspersky_Go/APILevel/IAdapters"
 	"Kaspersky_Go/ModeLevel/Structures"
+	IAdapters2 "Kaspersky_Go/ServiceLevel/Interfaces/IAdapters"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -11,11 +11,11 @@ import (
 
 type HTTPServer struct {
 	server *http.Server
-	queue  IAdapters.Queue
-	state  IAdapters.StateStore
+	queue  IAdapters2.Queue
+	state  IAdapters2.StateStore
 }
 
-func NewHTTPServer(addr string, queue IAdapters.Queue, state IAdapters.StateStore) *HTTPServer {
+func NewHTTPServer(addr string, queue IAdapters2.Queue, state IAdapters2.StateStore) *HTTPServer {
 	mux := http.NewServeMux()
 
 	s := &HTTPServer{

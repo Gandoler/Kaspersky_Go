@@ -2,18 +2,19 @@ package WokerPool
 
 import (
 	"Kaspersky_Go/ModeLevel/Structures"
+	"Kaspersky_Go/ServiceLevel/Interfaces/IAdapters"
 	"Kaspersky_Go/ServiceLevel/Interfaces/IWorkerPool"
 	"context"
 )
 
 type WorkerPool struct {
 	workers   int
-	queue     IWorkerPool.Queue
-	state     IWorkerPool.StateStore
+	queue     IAdapters.Queue
+	state     IAdapters.StateStore
 	processor IWorkerPool.JobProcessor
 }
 
-func NewWorkerPool(workers int, queue IWorkerPool.Queue, state IWorkerPool.StateStore,
+func NewWorkerPool(workers int, queue IAdapters.Queue, state IAdapters.StateStore,
 	processor IWorkerPool.JobProcessor) *WorkerPool {
 
 	return &WorkerPool{

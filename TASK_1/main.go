@@ -1,21 +1,42 @@
 package main
 
 import (
-  "fmt"
+	"Kaspersky_Go/APILevel/Adapters"
+	"fmt"
+	"os"
+	"strconv"
 )
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
-
 func main() {
-  //TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-  // to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-  s := "gopher"
-  fmt.Printf("Hello and welcome, %s!\n", s)
+	QUEUE_SIZE_env := os.Getenv("QUEUE_SIZE")
+	WORKERS_env     := os.Getenv("WORKERS")
 
-  for i := 1; i <= 5; i++ {
-	//TIP <p>To start your debugging session, right-click your code in the editor and select the Debug option.</p> <p>We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-	// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.</p>
-	fmt.Println("i =", 100/i)
-  }
+	size, err := EnvTOInt(QUEUE_SIZE_env, "QUEUE_SIZE")
+	if err != nil {
+		panic(err)
+	}
+	worker, err := EnvTOInt(WORKERS_env, "WORKERS")
+	if err != nil {
+		panic(err)
+	}
+
+
+	queue := Adapters.NewMemoryQueue(size)
+	state := Adapters.NewMemoryStateStore()
+	pool  :=
+
+}
+
+
+func EnvTOInt(str string, typeOf string) (int ,error) {
+
+	tmp := 0
+	if str != "" {
+		var err error
+		tmp, err = strconv.Atoi(str)
+		if err != nil {
+			return 0, fmt.Errorf("ошибка при конвертации %s", typeOf)
+		}
+	}
+	return tmp, nil
 }
