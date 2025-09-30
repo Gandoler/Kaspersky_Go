@@ -1,21 +1,45 @@
 package main
 
 import (
-  "fmt"
+	"TASK_3/WorkerPool"
+	"fmt"
+	"log/slog"
+	"math/rand"
+	"os"
+	"time"
 )
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
-
 func main() {
-  //TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-  // to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-  s := "gopher"
-  fmt.Printf("Hello and welcome, %s!\n", s)
 
-  for i := 1; i <= 5; i++ {
-	//TIP <p>To start your debugging session, right-click your code in the editor and select the Debug option.</p> <p>We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-	// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.</p>
-	fmt.Println("i =", 100/i)
-  }
+	rand.Seed(time.Now().UnixNano())
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	p, err := WorkerPool.New(WorkerPool.Config{
+		Workers:   3,
+		QueueSize: 2,
+		AfterTask: func() { fmt.Println("after task hook") },
+	}, logger)
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < 10; i++ {
+		i := i
+		err := p.Submit(func() {
+			workMs := 200 + rand.Intn(400)
+			time.Sleep(time.Duration(workMs) * time.Millisecond)
+			fmt.Printf("task %d done in %dms\n", i, workMs)
+		})
+		if err != nil {
+			fmt.Printf("submit task %d error: %v\n", i, err)
+		}
+	}
+
+	if err := p.Stop(); err != nil {
+		panic(err)
+	}
+
+	fmt.Println("pool stopped")
+
 }

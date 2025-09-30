@@ -1,3 +1,3 @@
-module TASK_2
+module TASK_3
 
-go 1.24
+go 1.22
