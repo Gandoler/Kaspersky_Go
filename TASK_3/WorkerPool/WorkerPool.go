@@ -50,12 +50,10 @@ func (p *WorkerPool) Stop() error {
 		p.stopped = true
 		p.stateMu.Unlock()
 
-		p.wgWorkers.Wait()
-
 		close(p.queue)
+		p.wgWorkers.Wait()
 	})
 
-	p.wgWorkers.Wait()
 	return nil
 }
 
@@ -76,4 +74,25 @@ func (p *WorkerPool) worker() {
 func (p *WorkerPool) Start(task func()) {
 	defer func() { _ = recover() }()
 	task()
+}
+
+func New(config Config, logger *slog.Logger) (*WorkerPool, error) {
+	if config.Workers < 1 {
+		return nil, errors.New("workers must be greater than zero")
+	}
+	if config.QueueSize < 1 {
+		return nil, errors.New("queue size must be greater than zero")
+	}
+
+	pool := &WorkerPool{
+		queue:     make(chan func(), config.QueueSize),
+		afterHook: config.AfterTask,
+		logger:    logger,
+	}
+
+	pool.wgWorkers.Add(config.Workers)
+	for i := 0; i < config.Workers; i++ {
+		go pool.worker()
+	}
+	return pool, nil
 }
