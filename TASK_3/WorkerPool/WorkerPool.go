@@ -11,12 +11,7 @@ var (
 	ErrQueueFull = errors.New("queue full")
 )
 
-type Pool interface {
-	Submit(task func()) error
-	Stop() error
-}
-
-type workerPool struct {
+type WorkerPool struct {
 	queue     chan func()
 	stopOnce  sync.Once
 	stopped   bool
@@ -27,7 +22,7 @@ type workerPool struct {
 	logger    *slog.Logger
 }
 
-func (p *workerPool) Submit(task func()) error {
+func (p *WorkerPool) Submit(task func()) error {
 	if task == nil {
 		return nil
 	}
@@ -49,7 +44,7 @@ func (p *workerPool) Submit(task func()) error {
 	return nil
 }
 
-func (p *workerPool) Stop() error {
+func (p *WorkerPool) Stop() error {
 	p.stopOnce.Do(func() {
 		p.stateMu.Lock()
 		p.stopped = true
@@ -64,7 +59,7 @@ func (p *workerPool) Stop() error {
 	return nil
 }
 
-func (p *workerPool) worker() {
+func (p *WorkerPool) worker() {
 	defer p.wgWorkers.Done()
 	for task := range p.queue {
 		p.Start(task)
@@ -78,7 +73,7 @@ func (p *workerPool) worker() {
 	}
 }
 
-func (p *workerPool) Start(task func()) {
+func (p *WorkerPool) Start(task func()) {
 	defer func() { _ = recover() }()
 	task()
 }

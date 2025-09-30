@@ -3,6 +3,7 @@ package App
 import (
 	"errors"
 	"log/slog"
+	"Kaspersky_Go/TASK_3/WorkerPool"
 )
 
 type Config struct {
@@ -11,7 +12,7 @@ type Config struct {
 	afterHook func()
 }
 
-func NewPool(config Config, log *slog.Logger) (Pool, error) {
+func NewPool(config Config, log *slog.Logger) (WorkerPool.Pool, error) {
 	if config.Workers < 1 {
 		return nil, errors.New("workers must be greater than zero")
 	}
