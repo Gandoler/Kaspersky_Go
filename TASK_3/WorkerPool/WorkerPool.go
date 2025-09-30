@@ -42,7 +42,7 @@ func (p *workerPool) Submit(task func()) error {
 		p.stateMu.Unlock()
 		return ErrQueueFull
 	}
-	p.wgWorkers.Add(1)
+	p.wgTasks.Add(1)
 	p.stateMu.Unlock()
 
 	p.queue <- task
