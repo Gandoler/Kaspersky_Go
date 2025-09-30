@@ -5,16 +5,6 @@ import (
 	"log/slog"
 )
 
-type Pool interface {
-	Submit(task func()) error
-	Stop() error
-}
-
-var (
-	ErrStopped   = errors.New("pool stopped")
-	ErrQueueFull = errors.New("queue full")
-)
-
 type Config struct {
 	Workers   int
 	QueueSize int
