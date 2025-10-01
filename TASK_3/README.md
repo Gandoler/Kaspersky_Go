@@ -1,4 +1,4 @@
-# WorkerPool
+# TASK 3 WorkerPool
 
 ## Описание
 
