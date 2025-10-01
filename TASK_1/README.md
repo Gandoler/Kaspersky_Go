@@ -12,7 +12,7 @@
 ```bash
 cd .../Kaspersky_Go\TASK_1\Dockerfile # путь относительно корня проекта
 
-docker build -t Task1 .
+docker build -t task1 .
 docker run --rm -it -p 8080:8080 --name Task1Cont Task1
 
 ```
