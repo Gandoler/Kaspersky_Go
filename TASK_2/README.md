@@ -1,3 +1,5 @@
+# Для лучше репрезентативности, перейдите пожалуйста в мой [gitHub](https://github.com/Gandoler/Kaspersky_Go) репозиторий
+
 # TASK 2 Описание реализации WorkerPool
 
 ## Описание
